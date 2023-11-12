@@ -1,0 +1,74 @@
+import { vi, beforeEach, afterEach, describe, it, expect } from "vitest";
+
+
+
+import {
+	createUserController
+} from "../user.controller.js";
+
+import {
+	Request,
+	Response
+} from "../../../../__mocks__/express.js";
+
+import {
+	createUser
+} from "../../services/user.service.js";
+
+vi.mock("../../services/user.service.js");
+
+
+
+describe("User controllers", () => {
+	describe("Create user controller", () => {
+
+		let req, res, next;
+
+		beforeEach(() => {
+			req = new Request();
+			res = new Response();
+			next = vi.fn();
+		});
+
+		afterEach(() => {
+			vi.clearAllMocks();
+		});
+
+		it("Should respond with the new user given username and password", async () => {
+			//Arrange
+			req.body = {
+				username: "myUsername",
+				password: "myPassword"
+			};
+			createUser.mockImplementation(() => {
+				return Promise.resolve({ _id: "12345", username: "myUsername" });
+			});
+
+			//Act
+			await createUserController(req, res, next);
+
+			//Assert
+			expect(res.body._id).toBe("12345");
+			expect(res.body.username).toBe("myUsername");
+		});
+
+		it("Should not contain the hashed password with the new user object passed in the response", async () => {
+			//Arrange
+			req.body = {
+				username: "myUsername",
+				password: "myPassword"
+			};
+			createUser.mockImplementation(() => ({
+				_id: "12345",
+				username: "myUsername",
+				hashedPassword: "$hash$myPassword"
+			}));
+
+			//Act
+			await createUserController(req, res, next);
+
+			//Assert
+			expect(res.body.hashedPassword).not.toBeDefined();
+		});
+	});
+});
