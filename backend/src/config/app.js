@@ -13,5 +13,9 @@ app.use("/health-check", (req, res) =>
 	res.status(200).send("API is up")
 );
 
+import userRouter from "../api/v1/routes/user.route.js";
+
+app.use("/api/v1/auth", userRouter);
+
 
 export default app;
