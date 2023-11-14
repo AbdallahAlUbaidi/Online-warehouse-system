@@ -1,3 +1,5 @@
+import ValidationError from "../errors/ApiErrors/ValidationError.js";
+
 export default schema => (req, res, next) => {
 	try {
 		schema.parse({
@@ -7,6 +9,10 @@ export default schema => (req, res, next) => {
 		});
 		next();
 	} catch (err) {
-		next(err);
+		next(new ValidationError(
+			err
+				.issues
+				.map(i => ({ path: i.path, message: i.message }))
+		));
 	}
 };
