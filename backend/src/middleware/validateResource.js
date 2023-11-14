@@ -5,6 +5,7 @@ export default schema => (req, res, next) => {
 			params: req.params,
 			query: req.query
 		});
+		next();
 	} catch (err) {
 		next(err);
 	}
