@@ -6,3 +6,6 @@ export const createUser = async (username, hashedPassword) => {
 		hashedPassword
 	});
 };
+
+export const findUserByName = async username =>
+	UserModel.findOne({ username });
