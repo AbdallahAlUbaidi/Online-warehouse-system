@@ -17,5 +17,9 @@ import userRouter from "../api/v1/routes/user.route.js";
 
 app.use("/api/v1/auth", userRouter);
 
+import handleError from "../middleware/handleError.js";
+
+app.use(handleError);
+
 
 export default app;
