@@ -12,8 +12,10 @@ import {
 } from "../../../../__mocks__/express.js";
 
 import {
-	createUser
+	createUser,
+	findUserByName
 } from "../../services/user.service.js";
+import ValidationError from "../../../../errors/ApiErrors/ValidationError.js";
 
 vi.mock("../../services/user.service.js");
 
@@ -69,6 +71,30 @@ describe("User controllers", () => {
 
 			//Assert
 			expect(res.body.hashedPassword).not.toBeDefined();
+		});
+
+		it("Should pass a validation error to next if the username already exists", async () => {
+			//Arrange
+			req.body = {
+				username: "myUsername",
+				password: "myPassword"
+			};
+			createUser.mockImplementation(() => ({
+				_id: "12345",
+				username: "myUsername",
+				hashedPassword: "$hash$myPassword"
+			}));
+			findUserByName.mockImplementation(() =>
+				Promise.resolve({ _id: "12345" }));
+
+			//Act
+			await createUserController(req, res, next);
+
+			//Assert
+			expect(next).toHaveBeenCalledOnce();
+			expect(next.mock.calls[0][0])
+				.toBeInstanceOf(ValidationError);
+
 		});
 	});
 });
