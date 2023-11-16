@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const issueToken = async (userId, secret) =>
+export const issueToken = async (userId, secret = process.env.AUTH_SECRET) =>
 	new Promise((resolve, reject) => {
 		jwt.sign({ sub: userId }, secret, {
 			algorithm: "HS256",
@@ -12,7 +12,7 @@ export const issueToken = async (userId, secret) =>
 		});
 	});
 
-export const verifyToken = async (token, secret) =>
+export const verifyToken = async (token, secret = process.env.AUTH_SECRET) =>
 	new Promise((resolve, reject) => {
 		jwt.verify(token, secret, (err, decoded) => {
 			if (err)
