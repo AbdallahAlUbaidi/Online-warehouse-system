@@ -17,5 +17,11 @@ export const createUserSchema = object({
 		message: "Passwords do not match",
 		path: ["confirmPassword"]
 	}),
+});
 
+export const authenticateUserSchema = object({
+	body: object({
+		username: z.string({ required_error: "Please enter you username" }),
+		password: z.string({ required_error: "please enter you password" })
+	})
 });
