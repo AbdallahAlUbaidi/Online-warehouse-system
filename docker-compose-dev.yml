@@ -10,3 +10,4 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - AUTH_SECRET=f4e84ff4f1dba8b81324497427b89c29d0678e771f4187e9c915a86e1683a9d4274c82772e674162a76bd7f5ae6a32a101a5ca3b1f399e8ce4fc3e149b46091d
