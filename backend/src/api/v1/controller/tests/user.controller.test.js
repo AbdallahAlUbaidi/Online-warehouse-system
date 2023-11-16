@@ -36,7 +36,7 @@ describe("User controllers", () => {
 			vi.clearAllMocks();
 		});
 
-		it("Should respond with the new user given username and password", async () => {
+		it("Should respond with http status 201 given username and password", async () => {
 			//Arrange
 			req.body = {
 				username: "myUsername",
@@ -50,8 +50,7 @@ describe("User controllers", () => {
 			await createUserController(req, res, next);
 
 			//Assert
-			expect(res.body._id).toBe("12345");
-			expect(res.body.username).toBe("myUsername");
+			expect(res.statusCode).toBe(201);
 		});
 
 		it("Should not contain the hashed password with the new user object passed in the response", async () => {

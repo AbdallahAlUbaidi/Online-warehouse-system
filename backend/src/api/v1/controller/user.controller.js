@@ -26,11 +26,9 @@ export const createUserController = async (req, res, next) => {
 
 
 		const hashedPassword = await hashPassword(password);
-		const newUser = await createUser(username, hashedPassword);
+		await createUser(username, hashedPassword);
 
-		newUser.hashedPassword = undefined;
-
-		res.status(201).json(newUser);
+		res.status(201);
 
 	} catch (err) {
 		next(err);
