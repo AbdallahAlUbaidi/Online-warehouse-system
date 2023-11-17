@@ -1,7 +1,11 @@
 import ApiError from "../errors/ApiErrors/ApiError.js";
+import logger from "../config/logger.js";
 
 export default (err, req, res, next) => {
-	if (err instanceof ApiError)
+	if (err instanceof ApiError) {
 		err.handle(res);
-	next();
+		return next();
+	}
+	res.sendStatus(500);
+	logger.error(err.message);
 };
