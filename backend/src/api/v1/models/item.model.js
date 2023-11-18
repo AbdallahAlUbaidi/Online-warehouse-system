@@ -8,11 +8,13 @@ const itemSchema = new mongoose.Schema({
 	},
 	user: {
 		type: mongoose.Types.ObjectId,
-		ref: "User"
+		ref: "User",
+		required: true
 	},
 	category: {
 		type: mongoose.Types.ObjectId,
-		ref: "Category"
+		ref: "Category",
+		required: true
 	},
 	price: Number,
 	stock: Number
