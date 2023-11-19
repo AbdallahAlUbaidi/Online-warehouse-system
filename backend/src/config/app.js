@@ -15,9 +15,11 @@ app.use("/health-check", (req, res) =>
 
 import userRouter from "../api/v1/routes/user.route.js";
 import itemRouter from "../api/v1/routes/item.route.js";
+import categoryRouter from "../api/v1/routes/category.route.js";
 
 app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/items", itemRouter);
+app.use("/api/v1/categories", categoryRouter);
 
 import handleError from "../middleware/handleError.js";
 
