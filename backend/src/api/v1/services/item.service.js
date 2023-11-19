@@ -13,3 +13,6 @@ export const createItem = ({
 	stock,
 	category
 });
+
+export const findItemByName = itemName =>
+	itemModel.findOne({ name: itemName });
