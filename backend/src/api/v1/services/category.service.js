@@ -5,3 +5,6 @@ export const createCategory = async (categoryName, user) =>
 
 export const findCategoryByNameAndUserId = async (categoryName, userId) =>
 	categoryModel.findOne({ user: userId, name: categoryName });
+
+export const findCategoriesByUserId = async userId =>
+	categoryModel.find({ user: userId });
