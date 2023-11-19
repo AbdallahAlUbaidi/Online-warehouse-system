@@ -14,5 +14,5 @@ export const createItem = async ({
 	category
 });
 
-export const findItemByName = async itemName =>
-	itemModel.findOne({ name: itemName });
+export const findItemByNameAndUserId = async (itemName, userId) =>
+	itemModel.findOne({ name: itemName, user: userId });
