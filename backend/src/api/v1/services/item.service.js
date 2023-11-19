@@ -1,6 +1,6 @@
 import itemModel from "../models/item.model.js";
 
-export const createItem = ({
+export const createItem = async ({
 	name,
 	user,
 	price,
@@ -14,5 +14,5 @@ export const createItem = ({
 	category
 });
 
-export const findItemByName = itemName =>
+export const findItemByName = async itemName =>
 	itemModel.findOne({ name: itemName });
