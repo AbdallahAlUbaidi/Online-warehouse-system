@@ -14,8 +14,10 @@ app.use("/health-check", (req, res) =>
 );
 
 import userRouter from "../api/v1/routes/user.route.js";
+import itemRouter from "../api/v1/routes/item.route.js";
 
 app.use("/api/v1/auth", userRouter);
+app.use("/api/v1/items", itemRouter);
 
 import handleError from "../middleware/handleError.js";
 
