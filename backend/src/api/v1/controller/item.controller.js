@@ -3,14 +3,14 @@ import ValidationError from "../../../errors/ApiErrors/ValidationError";
 
 import {
 	createItem,
-	findItemByName
+	findItemByNameAndUserId
 } from "../services/item.service.js";
 
 export const createItemController = async (req, res, next) => {
 	const { name, price, category } = req.body;
 
 	try {
-		const item = await findItemByName(name);
+		const item = await findItemByNameAndUserId(name, req.user._id,);
 
 		if (item)
 			throw new ValidationError([{

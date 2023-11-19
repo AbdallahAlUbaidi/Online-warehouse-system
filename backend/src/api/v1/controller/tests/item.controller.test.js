@@ -12,7 +12,7 @@ import {
 } from "../../../../__mocks__/express.js";
 
 import {
-	findItemByName,
+	findItemByNameAndUserId,
 	createItem
 } from "../../services/item.service.js";
 import ValidationError from "../../../../errors/ApiErrors/ValidationError.js";
@@ -81,7 +81,7 @@ describe("Item controllers", () => {
 					stock: 1,
 				});
 			});
-			findItemByName.mockImplementation(() =>
+			findItemByNameAndUserId.mockImplementation(() =>
 				Promise.resolve({ _id: "12345" }));
 
 			//Act
