@@ -8,3 +8,6 @@ export const findCategoryByNameAndUserId = async (categoryName, userId) =>
 
 export const findCategoriesByUserId = async userId =>
 	categoryModel.find({ user: userId });
+
+export const findCategoriesById = async categoryId =>
+	categoryModel.findById(categoryId);
