@@ -6,7 +6,8 @@ import authenticate from "../../../middleware/authenticate.js";
 import validateResource from "../../../middleware/validateResource.js";
 
 import {
-	createItemController
+	createItemController,
+	getItemsController
 } from "../controller/item.controller.js";
 
 
@@ -16,7 +17,11 @@ import {
 
 
 
-router.post("/", authenticate, validateResource(createItemSchema), createItemController);
+router.post("/", authenticate,
+	validateResource(createItemSchema),
+	createItemController);
 
+router.get("/", authenticate,
+	getItemsController);
 
 export default router;
