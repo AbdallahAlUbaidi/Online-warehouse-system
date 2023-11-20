@@ -30,13 +30,21 @@ export const getCategoriesController = async (req, res, next) => {
 	const { page, categories_per_page } = req.query;
 
 	try {
-		const categories = await findCategoriesByUserId(
+		const { categories,
+			categoriesCount,
+			totalPages
+		} = await findCategoriesByUserId(
 			req.user._id,
 			page >= 1 ? page : 1,
 			categories_per_page || 15
 		);
 
-		res.status(200).json({ categories });
+		res.status(200).json({
+			categories,
+			categoriesCount,
+			page: Number(page),
+			totalPages
+		});
 	} catch (err) {
 		next(err);
 	}
