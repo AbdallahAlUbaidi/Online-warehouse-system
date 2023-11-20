@@ -1,5 +1,5 @@
 
-import ValidationError from "../../../errors/ApiErrors/ValidationError";
+import ValidationError from "../../../errors/ApiErrors/ValidationError.js";
 
 import {
 	createItem,

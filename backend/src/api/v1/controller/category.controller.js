@@ -1,9 +1,9 @@
-import ValidationError from "../../../errors/ApiErrors/ValidationError";
+import ValidationError from "../../../errors/ApiErrors/ValidationError.js";
 import {
 	createCategory,
 	findCategoryByNameAndUserId,
 	findCategoriesByUserId
-} from "../services/category.service";
+} from "../services/category.service.js";
 
 export const createCategoryController = async (req, res, next) => {
 	const { categoryName } = req.body;
