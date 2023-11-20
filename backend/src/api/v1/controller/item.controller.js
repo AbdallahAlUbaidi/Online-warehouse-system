@@ -3,7 +3,8 @@ import ValidationError from "../../../errors/ApiErrors/ValidationError.js";
 
 import {
 	createItem,
-	findItemByNameAndUserId
+	findItemByNameAndUserId,
+	findItemsByUserId
 } from "../services/item.service.js";
 
 export const createItemController = async (req, res, next) => {
@@ -27,6 +28,27 @@ export const createItemController = async (req, res, next) => {
 		});
 		res.sendStatus(201);
 
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getItemsController = async (req, res, next) => {
+	const { page, item_per_page } = req.query;
+
+	try {
+		const { items, totalPages, itemsCount } = await findItemsByUserId(
+			req.user._id,
+			page >= 1 ? page : 1,
+			item_per_page || 30
+		);
+
+		res.status(200).json({
+			items,
+			itemsCount,
+			page: Number(page),
+			totalPages
+		});
 	} catch (err) {
 		next(err);
 	}
