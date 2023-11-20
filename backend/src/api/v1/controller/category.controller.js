@@ -1,7 +1,8 @@
 import ValidationError from "../../../errors/ApiErrors/ValidationError";
 import {
 	createCategory,
-	findCategoryByNameAndUserId
+	findCategoryByNameAndUserId,
+	findCategoriesByUserId
 } from "../services/category.service";
 
 export const createCategoryController = async (req, res, next) => {
@@ -23,4 +24,21 @@ export const createCategoryController = async (req, res, next) => {
 	} catch (err) {
 		next(err);
 	}
+};
+
+export const getCategoriesController = async (req, res, next) => {
+	const { page, categories_per_page } = req.query;
+
+	try {
+		const categories = await findCategoriesByUserId(
+			req.user._id,
+			page >= 1 ? page : 1,
+			categories_per_page || 15
+		);
+
+		res.status(200).json({ categories });
+	} catch (err) {
+		next(err);
+	}
+
 };
