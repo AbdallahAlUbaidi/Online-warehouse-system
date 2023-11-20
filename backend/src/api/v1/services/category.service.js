@@ -8,8 +8,8 @@ export const findCategoryByNameAndUserId = async (categoryName, userId) =>
 
 export const findCategoriesByUserId = async (userId, page, categoriesPerPage) =>
 	categoryModel
-		.find({ user: userId })
-		.skip(page - 1 * categoriesPerPage)
+		.find({ user: userId }, { _id: true, name: true })
+		.skip((page - 1) * categoriesPerPage)
 		.limit(categoriesPerPage);
 
 export const findCategoriesById = async categoryId =>
