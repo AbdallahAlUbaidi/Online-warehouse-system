@@ -16,3 +16,33 @@ export const createItem = async ({
 
 export const findItemByNameAndUserId = async (itemName, userId) =>
 	itemModel.findOne({ name: itemName, user: userId });
+
+export const findItemsByUserId = async (userId, page, itemsPerPage) => {
+	const aggregationPipeline = [
+		{ $match: { user: userId } },
+		{ $project: { _id: true, name: true, category: true, price: true, stock: true } },
+		{
+			$facet: {
+				items: [
+					{ $skip: (page - 1) * itemsPerPage },
+					{ $limit: Number(itemsPerPage) },
+				],
+				totalCount: [{ $count: "itemsCount" }],
+			}
+		}
+	];
+
+	const result = await itemModel.aggregate(aggregationPipeline);
+	const { items } = result[0];
+	const itemsCount = result[0]
+		.totalCount[0]?.itemsCount || 0;
+
+	const totalPages = Math.ceil(itemsCount / itemsPerPage);
+
+	return {
+		items,
+		totalPages,
+		itemsCount
+	};
+
+};
