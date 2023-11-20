@@ -5,7 +5,7 @@ export const createItemSchema = object({
 	body: object({
 		name: z
 			.string({ required_error: "Item name is required" })
-			.max(1, "Item name cannot be empty")
+			.min(1, "Item name cannot be empty")
 			.max(64, "Item name must be at most 64 characters long"),
 		category: z
 			.string({ required_error: "Item category is required" }),
