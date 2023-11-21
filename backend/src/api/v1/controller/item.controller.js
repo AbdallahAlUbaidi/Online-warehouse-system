@@ -36,6 +36,7 @@ export const createItemController = async (req, res, next) => {
 export const getItemsController = async (req, res, next) => {
 	const { page, item_per_page } = req.query;
 	const { minPrice, maxPrice, name, inStock } = req.query;
+	const { sort_by, sort_order } = req.query;
 
 	try {
 		const { items, totalPages, itemsCount } = await findItemsByUserId(
@@ -46,7 +47,9 @@ export const getItemsController = async (req, res, next) => {
 				minPrice,
 				maxPrice,
 				name,
-				inStock
+				inStock,
+				sort_by: sort_by || "name",
+				sort_order: sort_order || "desc"
 			}
 		);
 

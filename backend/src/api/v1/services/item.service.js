@@ -21,7 +21,9 @@ export const findItemsByUserId = async (userId, page, itemsPerPage, {
 	minPrice,
 	maxPrice,
 	name,
-	inStock
+	inStock,
+	sort_by,
+	sort_order
 }) => {
 
 	const aggregationPipeline = [
@@ -55,6 +57,12 @@ export const findItemsByUserId = async (userId, page, itemsPerPage, {
 				}
 				, price: true,
 				stock: true
+			}
+		},
+
+		{
+			$sort: {
+				[sort_by]: sort_order === "desc" ? -1 : 1
 			}
 		},
 
