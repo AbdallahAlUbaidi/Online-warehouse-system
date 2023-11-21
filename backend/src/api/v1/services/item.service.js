@@ -20,7 +20,28 @@ export const findItemByNameAndUserId = async (itemName, userId) =>
 export const findItemsByUserId = async (userId, page, itemsPerPage) => {
 	const aggregationPipeline = [
 		{ $match: { user: userId } },
-		{ $project: { _id: true, name: true, category: true, price: true, stock: true } },
+		{
+			$lookup: {
+				from: "categories",
+				localField: "category",
+				foreignField: "_id",
+				as: "category"
+			}
+		},
+		{ $unwind: "$category" },
+		{
+			$project: {
+				_id: true,
+				name: true,
+				category: {
+					_id: true,
+					name: true
+				}
+				, price: true,
+				stock: true
+			}
+		},
+
 		{
 			$facet: {
 				items: [
