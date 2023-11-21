@@ -17,9 +17,25 @@ export const createItem = async ({
 export const findItemByNameAndUserId = async (itemName, userId) =>
 	itemModel.findOne({ name: itemName, user: userId });
 
-export const findItemsByUserId = async (userId, page, itemsPerPage) => {
+export const findItemsByUserId = async (userId, page, itemsPerPage, {
+	minPrice,
+	maxPrice,
+	name,
+	inStock
+}) => {
+
 	const aggregationPipeline = [
-		{ $match: { user: userId } },
+		{
+			$match: {
+				user: userId,
+				price: {
+					$gte: parseFloat(minPrice) || 0,
+					$lte: parseFloat(maxPrice) || Number.MAX_SAFE_INTEGER
+				},
+				name: { $regex: new RegExp(name || "", "i") },
+				stock: !!inStock ? { $gt: 0 } : { $gte: 0 }
+			}
+		},
 		{
 			$lookup: {
 				from: "categories",

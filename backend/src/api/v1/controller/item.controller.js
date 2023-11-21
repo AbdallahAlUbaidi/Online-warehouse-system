@@ -35,12 +35,19 @@ export const createItemController = async (req, res, next) => {
 
 export const getItemsController = async (req, res, next) => {
 	const { page, item_per_page } = req.query;
+	const { minPrice, maxPrice, name, inStock } = req.query;
 
 	try {
 		const { items, totalPages, itemsCount } = await findItemsByUserId(
 			req.user._id,
 			page >= 1 ? page : 1,
-			item_per_page || 30
+			item_per_page || 30,
+			{
+				minPrice,
+				maxPrice,
+				name,
+				inStock
+			}
 		);
 
 		res.status(200).json({
