@@ -53,7 +53,7 @@ export const getItemsController = async (req, res, next) => {
 		res.status(200).json({
 			items,
 			itemsCount,
-			page: Number(page),
+			page: Number(page) || 1,
 			totalPages
 		});
 	} catch (err) {
