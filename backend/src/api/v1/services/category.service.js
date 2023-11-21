@@ -8,8 +8,12 @@ export const findCategoryByNameAndUserId = async (categoryName, userId) =>
 
 export const findCategoriesByUserId = async (userId, page, categoriesPerPage, searchQuery) => {
 	const aggregationPipeline = [
-		{ $match: { user: userId } },
-		{ $match: { name: new RegExp(searchQuery) } },
+		{
+			$match: {
+				user: userId,
+				name: { $regex: new RegExp(searchQuery, "i") }
+			}
+		},
 		{ $project: { _id: true, name: true } },
 		{
 			$facet: {
