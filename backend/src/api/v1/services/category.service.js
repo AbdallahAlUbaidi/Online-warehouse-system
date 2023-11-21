@@ -6,9 +6,10 @@ export const createCategory = async (categoryName, user) =>
 export const findCategoryByNameAndUserId = async (categoryName, userId) =>
 	categoryModel.findOne({ user: userId, name: categoryName });
 
-export const findCategoriesByUserId = async (userId, page, categoriesPerPage) => {
+export const findCategoriesByUserId = async (userId, page, categoriesPerPage, searchQuery) => {
 	const aggregationPipeline = [
 		{ $match: { user: userId } },
+		{ $match: { name: new RegExp(searchQuery) } },
 		{ $project: { _id: true, name: true } },
 		{
 			$facet: {

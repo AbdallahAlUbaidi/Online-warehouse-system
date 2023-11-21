@@ -27,7 +27,7 @@ export const createCategoryController = async (req, res, next) => {
 };
 
 export const getCategoriesController = async (req, res, next) => {
-	const { page, categories_per_page } = req.query;
+	const { page, categories_per_page, search_query } = req.query;
 
 	try {
 		const { categories,
@@ -36,13 +36,14 @@ export const getCategoriesController = async (req, res, next) => {
 		} = await findCategoriesByUserId(
 			req.user._id,
 			page >= 1 ? page : 1,
-			categories_per_page || 15
+			categories_per_page || 15,
+			search_query || ""
 		);
 
 		res.status(200).json({
 			categories,
 			categoriesCount,
-			page: Number(page),
+			page: Number(page) || 1,
 			totalPages
 		});
 	} catch (err) {
