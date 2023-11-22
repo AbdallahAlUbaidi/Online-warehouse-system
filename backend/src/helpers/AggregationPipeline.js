@@ -94,11 +94,11 @@ export const parsePipelineResult = (result, documentsPerPage) => {
 	const documentsCount = result[0]
 		.totalCount[0]?.documentsCount || 0;
 
-	const totalPage = Math.ceil(documentsCount / documentsPerPage);
+	const totalPages = Math.ceil(documentsCount / documentsPerPage);
 
 	return {
 		documents,
 		documentsCount,
-		totalPage
+		totalPages
 	};
 };
