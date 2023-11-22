@@ -1,38 +1,32 @@
 import categoryModel from "../models/category.model.js";
 
+import AggregationPipeline, {
+	parsePipelineResult
+} from "../../../helpers/AggregationPipeline.js";
+
 export const createCategory = async (categoryName, user) =>
 	categoryModel.create({ name: categoryName, user });
 
 export const findCategoryByNameAndUserId = async (categoryName, userId) =>
 	categoryModel.findOne({ user: userId, name: categoryName });
 
-export const findCategoriesByUserId = async (userId, page, categoriesPerPage, searchQuery) => {
-	const aggregationPipeline = [
-		{
-			$match: {
-				user: userId,
-				name: { $regex: new RegExp(searchQuery, "i") }
-			}
-		},
-		{ $project: { _id: true, name: true } },
-		{
-			$facet: {
-				categories: [
-					{ $skip: (page - 1) * categoriesPerPage },
-					{ $limit: Number(categoriesPerPage) }
-				],
-				totalCount: [{ $count: "categoriesCount" }]
-			}
-		}
-	];
+export const findCategoriesByUserId = async (userId, { page, categoriesPerPage, searchQuery }) => {
 
-	const result = await categoryModel.aggregate(aggregationPipeline);
+	const aggregationPipeline =
+		new AggregationPipeline()
+			.match({ name: searchQuery })
+			.matchExact({ user: userId })
+			.project(["_id", "name"])
+			.paginate(categoriesPerPage, page)
+			.getPipeline();
 
-	const { categories } = result[0];
-	const categoriesCount = result[0]
-		.totalCount[0]?.categoriesCount || 0;
+	const aggregationResult = await categoryModel.aggregate(aggregationPipeline);
 
-	const totalPages = Math.ceil(categoriesCount / categoriesPerPage);
+	const {
+		documents: categories,
+		documentsCount: categoriesCount,
+		totalPages
+	} = parsePipelineResult(aggregationResult, categoriesPerPage);
 
 	return {
 		categories,
@@ -40,5 +34,6 @@ export const findCategoriesByUserId = async (userId, page, categoriesPerPage, se
 		totalPages
 	};
 };
+
 export const findCategoriesById = async categoryId =>
 	categoryModel.findById(categoryId);
