@@ -50,7 +50,7 @@ export const findItemsByUserId = async (userId, {
 		documents: items,
 		documentsCount: itemsCount,
 		totalPages
-	} = parsePipelineResult(aggregationResult);
+	} = parsePipelineResult(aggregationResult, itemsPerPage);
 
 	return {
 		items,
