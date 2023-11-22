@@ -1,5 +1,9 @@
 import itemModel from "../models/item.model.js";
 
+import AggregationPipeline, {
+	parsePipelineResult
+} from "../../../helpers/AggregationPipeline.js";
+
 export const createItem = async ({
 	name,
 	user,
@@ -17,72 +21,36 @@ export const createItem = async ({
 export const findItemByNameAndUserId = async (itemName, userId) =>
 	itemModel.findOne({ name: itemName, user: userId });
 
-export const findItemsByUserId = async (userId, page, itemsPerPage, {
+export const findItemsByUserId = async (userId, {
+	page,
+	itemsPerPage,
 	minPrice,
 	maxPrice,
 	name,
 	inStock,
-	sort_by,
-	sort_order
+	sortBy,
+	sortOrder
 }) => {
+	const aggregationPipeline =
+		new AggregationPipeline()
+			.matchExact({ user: userId, })
+			.matchHigherThanZero("stock", !!inStock)
+			.matchRange(minPrice, maxPrice, "price")
+			.match({ name })
+			.populate("category", "categories")
+			.project(["_id", "name", "price", "stock",
+				"category._id", "category.name"])
+			.sort(sortBy || "name", sortOrder)
+			.paginate(itemsPerPage, page)
+			.getPipeline();
 
-	const aggregationPipeline = [
-		{
-			$match: {
-				user: userId,
-				price: {
-					$gte: parseFloat(minPrice) || 0,
-					$lte: parseFloat(maxPrice) || Number.MAX_SAFE_INTEGER
-				},
-				name: { $regex: new RegExp(name || "", "i") },
-				stock: !!inStock ? { $gt: 0 } : { $gte: 0 }
-			}
-		},
-		{
-			$lookup: {
-				from: "categories",
-				localField: "category",
-				foreignField: "_id",
-				as: "category"
-			}
-		},
-		{ $unwind: "$category" },
-		{
-			$project: {
-				_id: true,
-				name: true,
-				category: {
-					_id: true,
-					name: true
-				}
-				, price: true,
-				stock: true
-			}
-		},
+	const aggregationResult = await itemModel.aggregate(aggregationPipeline);
 
-		{
-			$sort: {
-				[sort_by]: sort_order === "desc" ? -1 : 1
-			}
-		},
-
-		{
-			$facet: {
-				items: [
-					{ $skip: (page - 1) * itemsPerPage },
-					{ $limit: Number(itemsPerPage) },
-				],
-				totalCount: [{ $count: "itemsCount" }],
-			}
-		}
-	];
-
-	const result = await itemModel.aggregate(aggregationPipeline);
-	const { items } = result[0];
-	const itemsCount = result[0]
-		.totalCount[0]?.itemsCount || 0;
-
-	const totalPages = Math.ceil(itemsCount / itemsPerPage);
+	const {
+		documents: items,
+		documentsCount: itemsCount,
+		totalPages
+	} = parsePipelineResult(aggregationResult);
 
 	return {
 		items,
