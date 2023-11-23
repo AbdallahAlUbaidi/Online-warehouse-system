@@ -35,5 +35,5 @@ export const findCategoriesByUserId = async (userId, { page, categoriesPerPage, 
 	};
 };
 
-export const findCategoriesById = async categoryId =>
+export const findCategoryById = async categoryId =>
 	categoryModel.findById(categoryId);

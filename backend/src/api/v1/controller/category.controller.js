@@ -1,8 +1,12 @@
 import ValidationError from "../../../errors/ApiErrors/ValidationError.js";
+import NotFoundError from "../../../errors/ApiErrors/NorFoundError.js";
+import ForbiddenAccessError from "../../../errors/ApiErrors/ForbiddenAccessError.js";
+
 import {
 	createCategory,
 	findCategoryByNameAndUserId,
-	findCategoriesByUserId
+	findCategoriesByUserId,
+	findCategoryById
 } from "../services/category.service.js";
 
 export const createCategoryController = async (req, res, next) => {
@@ -56,4 +60,22 @@ export const getCategoriesController = async (req, res, next) => {
 		next(err);
 	}
 
+};
+
+export const getCategoryController = async (req, res, next) => {
+	const { categoryId } = req.params;
+
+	try {
+		const category = await findCategoryById(categoryId);
+
+		if (!category)
+			throw new NotFoundError("Category not found");
+
+		if (String(category.user) !== String(req.user._id))
+			throw new ForbiddenAccessError();
+
+
+	} catch (err) {
+		next(err);
+	}
 };
