@@ -12,7 +12,8 @@ import {
 } from "../controller/category.controller.js";
 
 import {
-	createCategorySchema
+	createCategorySchema,
+	getCategorySchema
 } from "../schemas/category.schema.js";
 
 router.post("/", authenticate,
@@ -26,6 +27,7 @@ router.get("/",
 
 router.get("/:categoryId",
 	authenticate,
+	validateResource(getCategorySchema),
 	getCategoryController
 );
 
