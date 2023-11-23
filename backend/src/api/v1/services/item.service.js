@@ -59,3 +59,6 @@ export const findItemsByUserId = async (userId, {
 	};
 
 };
+
+export const findItemById = async itemId =>
+	itemModel.findById(itemId);
