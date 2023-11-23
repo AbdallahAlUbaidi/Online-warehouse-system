@@ -74,7 +74,16 @@ export const getCategoryController = async (req, res, next) => {
 		if (String(category.user) !== String(req.user._id))
 			throw new ForbiddenAccessError();
 
+		const {
+			_id,
+			name
+		} = category;
 
+		res.status(200)
+			.json({
+				category: { _id, name }
+			});
+		
 	} catch (err) {
 		next(err);
 	}
