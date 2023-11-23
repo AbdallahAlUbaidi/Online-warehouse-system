@@ -61,4 +61,6 @@ export const findItemsByUserId = async (userId, {
 };
 
 export const findItemById = async itemId =>
-	itemModel.findById(itemId);
+	itemModel
+		.findById(itemId)
+		.populate("category");

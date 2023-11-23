@@ -1,10 +1,13 @@
 
 import ValidationError from "../../../errors/ApiErrors/ValidationError.js";
+import NotFoundError from "../../../errors/ApiErrors/NorFoundError.js";
+import ForbiddenAccessError from "../../../errors/ApiErrors/ForbiddenAccessError.js";
 
 import {
 	createItem,
 	findItemByNameAndUserId,
-	findItemsByUserId
+	findItemsByUserId,
+	findItemById
 } from "../services/item.service.js";
 
 export const createItemController = async (req, res, next) => {
@@ -67,6 +70,43 @@ export const getItemsController = async (req, res, next) => {
 			page: Number(page) || 1,
 			totalPages
 		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getItemController = async (req, res, next) => {
+	const { itemId } = req.params;
+
+	try {
+		const item = await findItemById(itemId);
+
+		if (!item)
+			throw new NotFoundError("Item not found");
+
+		if (String(item.user) !== String(req.user._id))
+			throw new ForbiddenAccessError();
+
+		const {
+			_id,
+			name,
+			price,
+			stock,
+			category
+		} = item;
+
+
+		res.status(200)
+			.json({
+				item: {
+					_id, name, price, stock,
+					category: {
+						_id: category._id,
+						name: category.name
+					}
+				}
+			});
+
 	} catch (err) {
 		next(err);
 	}
