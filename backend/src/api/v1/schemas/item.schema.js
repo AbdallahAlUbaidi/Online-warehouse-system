@@ -1,4 +1,5 @@
 import { object, z } from "zod";
+import mongoose from "mongoose";
 
 
 export const createItemSchema = object({
@@ -13,4 +14,10 @@ export const createItemSchema = object({
 			.number({ required_error: "Item must have a price" })
 			.min(0, "Item price cannot be in negative")
 	}),
+});
+
+export const getItemSchema = object({
+	params: z
+		.string({ required_error: "Must specify item id" })
+		.refine(mongoose.isValidObjectId, "The Id provided is invalid")
 });
