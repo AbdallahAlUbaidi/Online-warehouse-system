@@ -8,12 +8,13 @@ import validateResource from "../../../middleware/validateResource.js";
 import {
 	createItemController,
 	getItemsController,
-	getItemController
+	getItemController,
 } from "../controller/item.controller.js";
 
 
 import {
-	createItemSchema
+	createItemSchema,
+	getItemSchema
 } from "../schemas/item.schema.js";
 
 
@@ -27,6 +28,7 @@ router.get("/", authenticate,
 
 router.get("/:itemId",
 	authenticate,
+	validateResource(getItemSchema),
 	getItemController);
 
 export default router;

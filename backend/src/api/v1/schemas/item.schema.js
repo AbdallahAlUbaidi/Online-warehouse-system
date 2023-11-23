@@ -17,7 +17,9 @@ export const createItemSchema = object({
 });
 
 export const getItemSchema = object({
-	params: z
-		.string({ required_error: "Must specify item id" })
-		.refine(mongoose.isValidObjectId, "The Id provided is invalid")
+	params: object({
+		itemId: z
+			.string({ required_error: "Must specify item id" })
+			.refine(mongoose.isValidObjectId, "The Id provided is invalid")
+	})
 });
