@@ -83,7 +83,7 @@ export const getCategoryController = async (req, res, next) => {
 			.json({
 				category: { _id, name }
 			});
-		
+
 	} catch (err) {
 		next(err);
 	}
