@@ -18,3 +18,14 @@ export const getCategorySchema = object({
 			.refine(mongoose.isValidObjectId, "The Id provided is invalid"),
 	})
 });
+
+export const updateCategorySchema = object({
+	params: object({
+		categoryId: z
+			.string({ required_error: "Must specify categoryId" })
+			.refine(mongoose.isValidObjectId, "The Id provided is invalid"),
+	}),
+	body: object({
+		newName: z.string({ required_error: "Must specify the new name" })
+	})
+});
