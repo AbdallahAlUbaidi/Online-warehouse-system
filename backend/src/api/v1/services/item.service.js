@@ -29,11 +29,14 @@ export const findItemsByUserId = async (userId, {
 	name,
 	inStock,
 	sortBy,
-	sortOrder
+	sortOrder,
+	categoryId
 }) => {
+	const categoryFilter = categoryId ? { category: categoryId } : {};
+
 	const aggregationPipeline =
 		new AggregationPipeline()
-			.matchExact({ user: userId, })
+			.matchExact({ user: userId, ...categoryFilter })
 			.matchHigherThanZero("stock", !!inStock)
 			.matchRange(minPrice, maxPrice, "price")
 			.match({ name })
