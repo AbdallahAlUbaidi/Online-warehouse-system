@@ -9,6 +9,10 @@ import {
 	findCategoryById
 } from "../services/category.service.js";
 
+import {
+	findItemsByUserId
+} from "../services/item.service.js";
+
 export const createCategoryController = async (req, res, next) => {
 	const { categoryName } = req.body;
 
@@ -83,6 +87,52 @@ export const getCategoryController = async (req, res, next) => {
 			.json({
 				category: { _id, name }
 			});
+
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const getCategoryItemsController = async (req, res, next) => {
+	const { categoryId } = req.params;
+	const {
+		page,
+		itemsPerPage,
+		sortBy,
+		sortOrder,
+		name,
+		minPrice,
+		maxPrice,
+		inStock
+	} = req.query;
+
+	try {
+		const category = await findCategoryById(categoryId);
+
+		if (!category)
+			throw new NotFoundError("Category was not found");
+
+		if (String(category.user) !== String(req.user._id))
+			throw new ForbiddenAccessError();
+
+		const { items, itemsCount, totalPages } = await findItemsByUserId(req.user._id, {
+			page: Math.max(1, page),
+			itemsPerPage: itemsPerPage || 30,
+			minPrice,
+			maxPrice,
+			sortBy,
+			sortOrder,
+			categoryId,
+			name,
+			inStock
+		});
+
+		res.status(200).json({
+			items,
+			itemsCount,
+			page: Math.max(1, page),
+			totalPages
+		});
 
 	} catch (err) {
 		next(err);
