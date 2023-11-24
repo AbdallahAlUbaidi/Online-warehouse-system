@@ -8,8 +8,13 @@ import {
 	findItemByNameAndUserId,
 	findItemsByUserId,
 	findItemById,
-	deleteItemById
+	deleteItemById,
+	updateItemById
 } from "../services/item.service.js";
+
+import {
+	findCategoryById
+} from "../services/category.service.js";
 
 export const createItemController = async (req, res, next) => {
 	const { name, price, category } = req.body;
@@ -128,6 +133,57 @@ export const deleteItemController = async (req, res, next) => {
 		await deleteItemById(itemId);
 
 		res.sendStatus(200);
+
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const updateItemController = async (req, res, next) => {
+	const { itemId } = req.params;
+	const {
+		newName,
+		newPrice,
+		newStock,
+		newCategory
+	} = req.body;
+
+	try {
+		const item = await findItemById(itemId);
+
+		if (!item)
+			throw new NotFoundError("Item not found");
+
+		if (String(item.user) !== String(req.user._id))
+			throw new ForbiddenAccessError("You do not have access to the specified item");
+
+		if (newCategory) {
+			const category = await findCategoryById(newCategory);
+
+			if (!category)
+				throw new NotFoundError("The category you are trying to update your item to does not exists");
+
+			if (String(category.user) !== String(req.user._id))
+				throw new ForbiddenAccessError("You do not have access to the The category you are trying to update your item to");
+		}
+
+		const {
+			_id,
+			name,
+			price,
+			stock,
+			category,
+		} = await updateItemById(itemId, {
+			newName,
+			newPrice,
+			newStock,
+			newCategory
+		});
+
+
+		res.status(200).json({
+			newItem: { _id, name, price, stock, category }
+		});
 
 	} catch (err) {
 		next(err);
