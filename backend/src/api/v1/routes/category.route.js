@@ -10,17 +10,21 @@ import {
 	deleteCategoryController,
 	getCategoriesController,
 	getCategoryController,
-	getCategoryItemsController
+	getCategoryItemsController,
+	updateCategoryController
 } from "../controller/category.controller.js";
 
 import {
 	createCategorySchema,
-	getCategorySchema
+	getCategorySchema,
+	updateCategorySchema
 } from "../schemas/category.schema.js";
 
-router.post("/", authenticate,
+router.post("/",
+	authenticate,
 	validateResource(createCategorySchema),
-	createCategoryController);
+	createCategoryController
+);
 
 router.get("/",
 	authenticate,
@@ -36,11 +40,19 @@ router.get("/:categoryId",
 router.get("/:categoryId/items",
 	authenticate,
 	validateResource(getCategorySchema),
-	getCategoryItemsController);
+	getCategoryItemsController
+);
 
 router.delete("/:categoryId",
 	authenticate,
 	validateResource(getCategorySchema),
-	deleteCategoryController);
+	deleteCategoryController
+);
+
+router.put("/:categoryId",
+	authenticate,
+	validateResource(updateCategorySchema),
+	updateCategoryController
+);
 
 export default router;

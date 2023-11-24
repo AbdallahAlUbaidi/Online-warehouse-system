@@ -175,9 +175,9 @@ export const updateCategoryController = async (req, res, next) => {
 		if (String(category.user) !== String(req.user._id))
 			throw new ForbiddenAccessError();
 
-		const newCategory = await updateCategoryById(categoryId, { newName });
+		const { _id, name } = await updateCategoryById(categoryId, { newName });
 
-		res.status(200).json({ newCategory });
+		res.status(200).json({ newCategory: { _id, name } });
 
 	} catch (err) {
 		next(err);
