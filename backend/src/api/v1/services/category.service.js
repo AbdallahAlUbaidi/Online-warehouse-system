@@ -40,3 +40,7 @@ export const findCategoryById = async categoryId =>
 
 export const deleteCategoryById = async categoryId =>
 	categoryModel.deleteOne({ _id: categoryId });
+
+export const updateCategoryById = async (categoryId, {
+	newName
+}) => categoryModel.updateOne({ _id: categoryId }, { name:newName });
