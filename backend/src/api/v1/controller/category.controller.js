@@ -6,7 +6,8 @@ import {
 	createCategory,
 	findCategoryByNameAndUserId,
 	findCategoriesByUserId,
-	findCategoryById
+	findCategoryById,
+	deleteCategoryById
 } from "../services/category.service.js";
 
 import {
@@ -133,6 +134,27 @@ export const getCategoryItemsController = async (req, res, next) => {
 			page: page >= 1 ? page : 1,
 			totalPages
 		});
+
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const deleteCategoryController = async (req, res, next) => {
+	const { categoryId } = req.params;
+
+	try {
+		const category = await findCategoryById(categoryId);
+
+		if (!category)
+			throw new NotFoundError("Category not found");
+
+		if (String(category.user) !== String(req.user._id))
+			throw new ForbiddenAccessError();
+
+		await deleteCategoryById(categoryId);
+
+		res.sendStatus(200);
 
 	} catch (err) {
 		next(err);
