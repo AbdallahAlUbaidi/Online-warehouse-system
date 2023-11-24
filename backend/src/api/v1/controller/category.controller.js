@@ -116,13 +116,13 @@ export const getCategoryItemsController = async (req, res, next) => {
 			throw new ForbiddenAccessError();
 
 		const { items, itemsCount, totalPages } = await findItemsByUserId(req.user._id, {
-			page: Math.max(1, page),
+			page: page >= 1 ? page : 1,
 			itemsPerPage: itemsPerPage || 30,
 			minPrice,
 			maxPrice,
 			sortBy,
 			sortOrder,
-			categoryId,
+			categoryId: category._id,
 			name,
 			inStock
 		});
@@ -130,7 +130,7 @@ export const getCategoryItemsController = async (req, res, next) => {
 		res.status(200).json({
 			items,
 			itemsCount,
-			page: Math.max(1, page),
+			page: page >= 1 ? page : 1,
 			totalPages
 		});
 

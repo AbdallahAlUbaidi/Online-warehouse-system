@@ -8,7 +8,8 @@ import validateResource from "../../../middleware/validateResource.js";
 import {
 	createCategoryController,
 	getCategoriesController,
-	getCategoryController
+	getCategoryController,
+	getCategoryItemsController
 } from "../controller/category.controller.js";
 
 import {
@@ -30,5 +31,10 @@ router.get("/:categoryId",
 	validateResource(getCategorySchema),
 	getCategoryController
 );
+
+router.get("/:categoryId/items",
+	authenticate,
+	validateResource(getCategorySchema),
+	getCategoryItemsController);
 
 export default router;
