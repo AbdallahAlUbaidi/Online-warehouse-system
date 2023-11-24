@@ -72,15 +72,17 @@ export const deleteItemById = async itemId =>
 	itemModel.deleteOne({ _id: itemId });
 
 export const updateItemById = async (itemId, {
-	name,
-	price,
-	category,
-	stock
-}) => itemModel.findOneAndUpdate({
-	_id: itemId
-}, {
-	name,
-	price,
-	category,
-	stock
-});
+	newName,
+	newPrice,
+	newCategory,
+	newStock
+}) => itemModel
+	.findOneAndUpdate({
+		_id: itemId
+	}, {
+		name: newName,
+		price: newPrice,
+		category: newCategory,
+		stock: newStock
+	}, { new: true })
+	.populate("category", "_id name");
