@@ -9,6 +9,7 @@ import {
 	createItemController,
 	getItemsController,
 	getItemController,
+	deleteItemController,
 } from "../controller/item.controller.js";
 
 
@@ -30,5 +31,10 @@ router.get("/:itemId",
 	authenticate,
 	validateResource(getItemSchema),
 	getItemController);
+
+router.delete("/:itemId",
+	authenticate,
+	validateResource(getItemSchema),
+	deleteItemController);
 
 export default router;
