@@ -47,4 +47,4 @@ export const updateCategoryById = async (categoryId, {
 	_id: categoryId
 }, {
 	name: newName
-});
+}, { new: true });
