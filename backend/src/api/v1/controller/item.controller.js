@@ -7,7 +7,8 @@ import {
 	createItem,
 	findItemByNameAndUserId,
 	findItemsByUserId,
-	findItemById
+	findItemById,
+	deleteItemById
 } from "../services/item.service.js";
 
 export const createItemController = async (req, res, next) => {
@@ -106,6 +107,27 @@ export const getItemController = async (req, res, next) => {
 					}
 				}
 			});
+
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const deleteItemController = async (req, res, next) => {
+	const { itemId } = req.params;
+
+	try {
+		const item = await findItemById(itemId);
+
+		if (!item)
+			throw new NotFoundError("Item not found");
+
+		if (String(item.user) !== String(req.user._id))
+			throw new ForbiddenAccessError();
+
+		await deleteItemById(itemId);
+
+		res.sendStatus(200);
 
 	} catch (err) {
 		next(err);
