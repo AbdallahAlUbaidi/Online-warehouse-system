@@ -10,12 +10,14 @@ import {
 	getItemsController,
 	getItemController,
 	deleteItemController,
+	updateItemController,
 } from "../controller/item.controller.js";
 
 
 import {
 	createItemSchema,
-	getItemSchema
+	getItemSchema,
+	updateItemSchema
 } from "../schemas/item.schema.js";
 
 
@@ -36,5 +38,10 @@ router.delete("/:itemId",
 	authenticate,
 	validateResource(getItemSchema),
 	deleteItemController);
+
+router.put("/:itemId",
+	authenticate,
+	validateResource(updateItemSchema),
+	updateItemController);
 
 export default router;
