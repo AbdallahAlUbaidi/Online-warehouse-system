@@ -67,3 +67,6 @@ export const findItemById = async itemId =>
 	itemModel
 		.findById(itemId)
 		.populate("category");
+
+export const deleteItemById = async itemId =>
+	itemModel.deleteOne({ _id: itemId });
