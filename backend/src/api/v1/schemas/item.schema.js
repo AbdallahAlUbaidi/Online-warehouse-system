@@ -23,3 +23,28 @@ export const getItemSchema = object({
 			.refine(mongoose.isValidObjectId, "The Id provided is invalid")
 	})
 });
+
+export const updateItemSchema = object({
+	params: object({
+		itemId: z
+			.string({ required_error: "Must specify item id" })
+			.refine(mongoose.isValidObjectId, "The Id provided is invalid")
+	}),
+	body: object({
+		newName: z
+			.string()
+			.optional(),
+		newCategory: z
+			.string()
+			.refine(mongoose.isValidObjectId, "The category Id provided is invalid")
+			.optional(),
+		newPrice: z
+			.number("Price must be a number")
+			.optional(),
+		newStock: z
+			.number("Stock must be a number")
+			.optional()
+	})
+		.refine(body =>
+			Object.keys(body).length > 0, "Must include new item data")
+});
