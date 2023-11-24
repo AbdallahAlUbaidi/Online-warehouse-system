@@ -7,6 +7,7 @@ import validateResource from "../../../middleware/validateResource.js";
 
 import {
 	createCategoryController,
+	deleteCategoryController,
 	getCategoriesController,
 	getCategoryController,
 	getCategoryItemsController
@@ -36,5 +37,10 @@ router.get("/:categoryId/items",
 	authenticate,
 	validateResource(getCategorySchema),
 	getCategoryItemsController);
+
+router.delete("/:categoryId",
+	authenticate,
+	validateResource(getCategorySchema),
+	deleteCategoryController);
 
 export default router;
