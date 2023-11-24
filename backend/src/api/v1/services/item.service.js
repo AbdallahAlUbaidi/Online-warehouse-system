@@ -70,3 +70,17 @@ export const findItemById = async itemId =>
 
 export const deleteItemById = async itemId =>
 	itemModel.deleteOne({ _id: itemId });
+
+export const updateItemById = async (itemId, {
+	name,
+	price,
+	category,
+	stock
+}) => itemModel.findOneAndUpdate({
+	_id: itemId
+}, {
+	name,
+	price,
+	category,
+	stock
+});
