@@ -37,3 +37,6 @@ export const findCategoriesByUserId = async (userId, { page, categoriesPerPage, 
 
 export const findCategoryById = async categoryId =>
 	categoryModel.findById(categoryId);
+
+export const deleteCategoryById = async categoryId =>
+	categoryModel.deleteOne({ _id: categoryId });
