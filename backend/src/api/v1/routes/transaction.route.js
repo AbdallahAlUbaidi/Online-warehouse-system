@@ -1,8 +1,8 @@
 import express from "express";
 const router = express.Router();
 
-import authenticate from "../../../middleware/authenticate";
-import validateResource from "../../../middleware/validateResource";
+import authenticate from "../../../middleware/authenticate.js";
+import validateResource from "../../../middleware/validateResource.js";
 
 import {
 	createTransactionSchema
