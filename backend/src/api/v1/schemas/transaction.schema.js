@@ -1,4 +1,5 @@
 import { z, object } from "zod";
+import mongoose from "mongoose";
 
 export const createTransactionSchema = object({
 	body: object({
@@ -8,14 +9,12 @@ export const createTransactionSchema = object({
 			.max(64, "Buyer name cannot be longer than 64 characters"),
 		payment: object({
 			type: z
-				.string({ required_error: "Must specify the payment type" })
 				.enum(["cash", "debt", "installment"], "Invalid payment type"),
 			details: object({
-				remainingPrice: z
-					.number({ required_error: "You must include the remaining price" }),
 				dueDate: z
-					.date({ required_error: "Must include the due date for payment" })
-					.refine(dueDate => dueDate <= Date.now(), "Due date cannot be earlier than now"),
+					.date()
+					.refine(dueDate => dueDate <= Date.now(), "Due date cannot be earlier than now")
+					.optional(),
 				installmentPeriodInMonths: z
 					.number()
 					.optional(),
@@ -25,7 +24,7 @@ export const createTransactionSchema = object({
 				upfrontAmount: z
 					.number()
 					.optional()
-			})
+			}).optional()
 		})
 			.refine(({ type, details }) =>
 				type === "cash" || !!details, {
@@ -36,6 +35,13 @@ export const createTransactionSchema = object({
 				type !== "installment" || !!details?.installmentAmount, {
 				message: "If the payment type is installment you need to specify the installment amount",
 				path: ["details", "installmentAmount"]
-			})
+			}),
+		items: object({
+			itemId: z
+				.string({ required_error: "You need to specify the item id" })
+				.refine(mongoose.isValidObjectId)
+		})
+			.array()
+			.refine(items => items.length > 0, "You cannot make a transaction with no items")
 	})
 });
