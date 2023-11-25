@@ -86,3 +86,10 @@ export const updateItemById = async (itemId, {
 		stock: newStock
 	}, { new: true })
 	.populate("category", "_id name");
+
+export const updateItemStock = async (itemId, quantity) => {
+	return itemModel
+		.findByIdAndUpdate({ _id: itemId }, {
+			$inc: { stock: -quantity },
+		});
+};
