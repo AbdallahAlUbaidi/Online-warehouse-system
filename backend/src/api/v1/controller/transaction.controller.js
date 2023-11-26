@@ -1,6 +1,7 @@
 import {
 	createTransaction,
-	findTransactionsByUserId
+	findTransactionsByUserId,
+	findTransactionById
 } from "../services/transaction.service.js";
 
 import {
@@ -65,6 +66,10 @@ const sanitizeItemList = itemList => itemList
 		},
 		quantity
 	}));
+
+const sanitizeTransaction = ({ buyerName, _id, items, purchaseDate, payment }) =>
+	({ _id, buyerName, items, purchaseDate, payment });
+
 
 const paymentObjectConstructor = {
 	cash: () => ({ type: "cash", details: {} }),
@@ -190,4 +195,23 @@ export const getTransactionsController = async (req, res, next) => {
 		next(err);
 	}
 
-};	
+};
+
+export const getTransactionController = async (req, res, next) => {
+	const { transactionId } = req.params;
+
+	try {
+		const transaction = await findTransactionById(transactionId);
+
+		if (!transaction)
+			throw new NotFoundError("Transaction was not fount");
+
+		if (String(transaction.user) !== String(req.user._id))
+			throw new ForbiddenAccessError();
+
+		res.status(200).json({ transaction: sanitizeTransaction(transaction) });
+
+	} catch (err) {
+		next(err);
+	}
+};
