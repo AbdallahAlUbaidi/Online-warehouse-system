@@ -218,6 +218,7 @@ export const deleteTransactionController = async (req, res, next) => {
 
 		await deleteTransactionById(transaction, transaction.items);
 
+		res.sendStatus(200);
 	} catch (err) {
 		next(err);
 	}
