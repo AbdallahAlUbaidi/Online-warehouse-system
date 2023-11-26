@@ -76,3 +76,6 @@ export const findTransactionsByUserId = async ({
 		totalPages
 	};
 };
+
+export const findTransactionById = async transactionId =>
+	transactionModel.findById(transactionId);
