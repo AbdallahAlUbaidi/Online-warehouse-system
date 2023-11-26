@@ -77,3 +77,22 @@ export const findTransactionsByUserId = async ({
 
 export const findTransactionById = async transactionId =>
 	transactionModel.findById(transactionId);
+
+export const deleteTransactionById = async (transactionId, items) => {
+	const session = await mongoose.startSession();
+
+	try {
+		await session.withTransaction(async () => {
+			const updatedItemsPromises = items
+				.map(({ item: { itemId }, quantity }) =>
+					updateItemStock(itemId, -quantity));
+
+			const deleteTransactionPromise = transactionModel
+				.deleteOne({ _id: transactionId });
+
+			await Promise.all([deleteTransactionPromise, ...updatedItemsPromises]);
+		});
+	} finally {
+		session.endSession();
+	}
+};
