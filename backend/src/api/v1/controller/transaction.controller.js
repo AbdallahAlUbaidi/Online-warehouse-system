@@ -56,13 +56,11 @@ const calculateItemsTotalPrice = itemList => itemList
 		totalPrice += price * quantity, 0);
 
 const sanitizeItemList = itemList => itemList
-	.map(({ item: { _id, name, price, category }, quantity }) => ({
-		_id,
-		name,
-		price,
-		category: {
-			_id: category._id,
-			name: category.name
+	.map(({ item: { _id, name, price }, quantity }) => ({
+		item: {
+			itemId: _id,
+			name,
+			price,
 		},
 		quantity
 	}));
@@ -125,26 +123,15 @@ export const createTransactionController = async (req, res, next) => {
 				itemsWithInsufficientStock:
 					getItemsWithInsufficientStock(populatedItemList)
 			});
-
 		const totalPrice = calculateItemsTotalPrice(populatedItemList);
-
-		const {
-			_id,
-			payment,
-		} = await createTransaction({
+		const transaction = sanitizeTransaction(await createTransaction({
 			payment: paymentObjectConstructor[type]({ ...details, totalPrice }),
 			buyerName,
-			items,
-			user: userId,
-		});
-
-		res.status(201).json({
 			items: sanitizeItemList(populatedItemList),
-			_id,
-			buyerName,
-			totalPrice,
-			payment,
-		});
+			user: userId,
+		}));
+
+		res.status(201).json({ transaction });
 
 	} catch (err) {
 		next(err);

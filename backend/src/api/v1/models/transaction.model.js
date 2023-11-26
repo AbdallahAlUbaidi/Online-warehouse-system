@@ -13,10 +13,18 @@ const transactionSchema = new mongoose.Schema({
 		required: true
 	},
 	items: [{
-		itemId: {
-			type: mongoose.Types.ObjectId,
-			ref: "Item",
-			required: true
+		item: {
+			itemId: {
+				type: mongoose.Types.ObjectId,
+				ref: "Item",
+				required: true
+			},
+			name: {
+				type: String,
+				required: true,
+			},
+			price: Number,
+			stock: Number
 		},
 		quantity: {
 			type: Number,

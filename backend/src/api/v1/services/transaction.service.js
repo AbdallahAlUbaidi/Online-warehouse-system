@@ -21,7 +21,7 @@ export const createTransaction = async ({
 		await session.withTransaction(async () => {
 
 			const updateStockPromises = items
-				.map(({ itemId, quantity }) =>
+				.map(({ item: { itemId }, quantity }) =>
 					updateItemStock(itemId, quantity));
 
 			const transactionPromise = transactionModel.create({
@@ -58,9 +58,7 @@ export const findTransactionsByUserId = async ({
 			.matchExact({ user: userId })
 			.match({ buyerName, "payment.type": paymentType })
 			.matchRange(minRemainingPrice, maxRemainingPrice, "payment.details.remainingPrice")
-			.populateArrObjects("items", "itemId", "items", "item")
-			.projectArrObject("items", ["_id", "name", "price", "quantity"],
-				["_id", "buyerName", "payment", "items", "purchaseDate"])
+			.project(["_id", "buyerName", "payment", "items", "purchaseDate"])
 			.sort(sortBy || "buyerName", sortOrder)
 			.paginate(transactionsPerPage, page)
 			.getPipeline();

@@ -56,63 +56,10 @@ export default class AggregationPipeline {
 		return this;
 	}
 
-	populateArrObjects(arrFieldName, fieldNameToBePopulated, collection, populateAs) {
-		this.pipeLineArr.push(
-			{ $unwind: `$${arrFieldName}` },
-			{
-				$lookup: {
-					from: collection,
-					localField: `${arrFieldName}.${fieldNameToBePopulated}`,
-					foreignField: "_id",
-					as: `${arrFieldName}.${populateAs}`
-				}
-			},
-			{ $unwind: `$${arrFieldName}.${populateAs}` },
-			{
-				$group: {
-					_id: "$_id",
-					[arrFieldName]: {
-						$push: {
-							$mergeObjects: [`$${arrFieldName}.${populateAs}`, `$${arrFieldName}`]
-						}
-					},
-					data: { $mergeObjects: "$$ROOT" }
-				}
-			},
-			{
-				$addFields: {
-					[`data.${arrFieldName}`]: `$${arrFieldName}`
-				}
-			},
-			{ $replaceWith: "$data" }
-		);
-		return this;
-	}
-
 	project(fieldsArr = []) {
 		const projectObj = {};
 		fieldsArr.forEach(field => projectObj[field] = true);
 		this.pipeLineArr.push({ $project: projectObj });
-		return this;
-	}
-
-	projectArrObject(arrFieldName, fieldsInsideArr = [], fieldsArr = []) {
-		this.pipeLineArr.push({ $unwind: `$${arrFieldName}` });
-		this.project([
-			...fieldsInsideArr.map(f => `${arrFieldName}.${f}`),
-			...fieldsArr.filter(f => f !== arrFieldName)
-		]);
-		this.pipeLineArr.push({
-			$group: {
-				_id: "$_id",
-				[arrFieldName]: { $push: `$${arrFieldName}` },
-				data: { $mergeObjects: "$$ROOT" }
-			}
-		}, {
-			$addFields: {
-				[`data.${arrFieldName}`]: `$${arrFieldName}`
-			}
-		}, { $replaceWith: "$data" });
 		return this;
 	}
 
