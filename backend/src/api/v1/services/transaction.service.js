@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 import {
 	updateItemStock
 } from "./item.service.js";
+import AggregationPipeline, {
+	parsePipelineResult
+} from "../../../helpers/AggregationPipeline.js";
 
 
 export const createTransaction = async ({
@@ -37,4 +40,39 @@ export const createTransaction = async ({
 	} finally {
 		session.endSession();
 	}
+};
+
+export const findTransactionsByUserId = async ({
+	userId,
+	buyerName,
+	paymentType,
+	minRemainingPrice,
+	maxRemainingPrice,
+	page,
+	transactionsPerPage,
+	sortBy,
+	sortOrder
+}) => {
+	const aggregationPipeline =
+		new AggregationPipeline()
+			.matchExact({ user: userId })
+			.match({ buyerName, "payment.type": paymentType })
+			.matchRange(minRemainingPrice, maxRemainingPrice, "payment.details.remainingPrice")
+			.populateArrObjects("items", "itemId", "items", "item")
+			.projectArrObject("items", ["_id", "name", "price", "quantity"],
+				["_id", "buyerName", "payment", "items", "purchaseDate"])
+			.sort(sortBy || "buyerName", sortOrder)
+			.paginate(transactionsPerPage, page)
+			.getPipeline();
+	const result = await transactionModel.aggregate(aggregationPipeline);
+	const {
+		documents: transactions,
+		documentsCount: transactionsCount,
+		totalPages
+	} = parsePipelineResult(result, transactionsPerPage);
+	return {
+		transactions,
+		transactionsCount,
+		totalPages
+	};
 };
