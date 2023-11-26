@@ -1,7 +1,8 @@
 import {
 	createTransaction,
 	findTransactionsByUserId,
-	findTransactionById
+	findTransactionById,
+	deleteTransactionById
 } from "../services/transaction.service.js";
 
 import {
@@ -197,6 +198,25 @@ export const getTransactionController = async (req, res, next) => {
 			throw new ForbiddenAccessError();
 
 		res.status(200).json({ transaction: sanitizeTransaction(transaction) });
+
+	} catch (err) {
+		next(err);
+	}
+};
+
+export const deleteTransactionController = async (req, res, next) => {
+	const { transactionId } = req.params;
+
+	try {
+		const transaction = await findTransactionById(transactionId);
+
+		if (!transaction)
+			throw new NotFoundError("Transaction not found");
+
+		if (String(transaction.user) !== String(req.user._id))
+			throw new ForbiddenAccessError();
+
+		await deleteTransactionById(transaction, transaction.items);
 
 	} catch (err) {
 		next(err);
