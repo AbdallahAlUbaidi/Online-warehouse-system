@@ -10,6 +10,7 @@ import {
 
 import {
 	createTransactionController,
+	getTransactionController,
 	getTransactionsController
 } from "../controller/transaction.controller.js";
 
@@ -23,6 +24,11 @@ router.post("/",
 router.get("/",
 	authenticate,
 	getTransactionsController
+);
+
+router.get("/:transactionId",
+	authenticate,
+	getTransactionController
 );
 
 export default router;
