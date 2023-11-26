@@ -1,5 +1,6 @@
 import {
-	createTransaction
+	createTransaction,
+	findTransactionsByUserId
 } from "../services/transaction.service.js";
 
 import {
@@ -144,3 +145,49 @@ export const createTransactionController = async (req, res, next) => {
 		next(err);
 	}
 };
+
+export const getTransactionsController = async (req, res, next) => {
+	let {
+		buyerName,
+		paymentType,
+		minRemainingPrice,
+		maxRemainingPrice,
+		page,
+		transactionsPerPage,
+		sortBy,
+		sortOrder
+	} = req.query;
+	const userId = req.user._id;
+	page = page >= 1 ? page : 1;
+	transactionsPerPage = transactionsPerPage || 30;
+
+	try {
+		const {
+			transactions,
+			transactionsCount,
+			totalPages
+		} = await findTransactionsByUserId({
+			userId,
+			buyerName,
+			paymentType,
+			minRemainingPrice,
+			maxRemainingPrice,
+			sortBy,
+			sortOrder,
+			page,
+			transactionsPerPage
+		});
+
+		res.status(200).json({
+			transactions,
+			transactionsCount,
+			totalPages,
+			page
+		});
+
+
+	} catch (err) {
+		next(err);
+	}
+
+};	
