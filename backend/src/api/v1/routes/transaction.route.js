@@ -12,6 +12,7 @@ import {
 	createTransactionController,
 	deleteTransactionController,
 	getTransactionController,
+	getTransactionItemsController,
 	getTransactionsController
 } from "../controller/transaction.controller.js";
 
@@ -31,6 +32,10 @@ router.get("/:transactionId",
 	authenticate,
 	getTransactionController
 );
+
+router.get("/:transactionId/items",
+	authenticate,
+	getTransactionItemsController);
 
 router.delete("/:transactionId",
 	authenticate,

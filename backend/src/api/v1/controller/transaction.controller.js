@@ -223,3 +223,24 @@ export const deleteTransactionController = async (req, res, next) => {
 		next(err);
 	}
 };
+
+export const getTransactionItemsController = async (req, res, next) => {
+	const { transactionId } = req.params;
+
+	try {
+		const transaction = await findTransactionById(transactionId);
+
+		if (!transaction)
+			throw new NotFoundError("Transaction was not found");
+
+		if (String(transaction.user) !== String(req.user._id))
+			throw new ForbiddenAccessError();
+
+		res
+			.status(200)
+			.json({ items: transaction.items });
+
+	} catch (err) {
+		next(err);
+	}
+};
