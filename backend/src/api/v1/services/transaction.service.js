@@ -96,3 +96,31 @@ export const deleteTransactionById = async (transactionId, items) => {
 		session.endSession();
 	}
 };
+
+export const updateTransactionById = async ({
+	transactionId,
+	newBuyerName,
+	payment: {
+		details: {
+			newRemainingPrice,
+			newDueDate,
+			newInstallmentPeriodInMonths,
+			newInstallmentAmount,
+		}
+	}
+
+}) => {
+	return transactionModel
+		.findOneAndUpdate({ _id: transactionId }, {
+			buyerName: newBuyerName,
+			payment: {
+				details: {
+					remainingPrice: newRemainingPrice,
+					dueDate: newDueDate,
+					installmentAmount: newInstallmentAmount,
+					installmentPeriodInMonths: newInstallmentPeriodInMonths,
+				}
+			}
+		}, { new: true }
+		);
+};
