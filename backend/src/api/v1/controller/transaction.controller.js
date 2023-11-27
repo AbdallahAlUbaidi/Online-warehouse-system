@@ -192,7 +192,7 @@ export const getTransactionController = async (req, res, next) => {
 		const transaction = await findTransactionById(transactionId);
 
 		if (!transaction)
-			throw new NotFoundError("Transaction was not fount");
+			throw new NotFoundError("Transaction was not found");
 
 		if (String(transaction.user) !== String(req.user._id))
 			throw new ForbiddenAccessError();
