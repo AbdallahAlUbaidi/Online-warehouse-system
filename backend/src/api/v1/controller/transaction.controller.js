@@ -77,6 +77,7 @@ const paymentObjectConstructor = {
 		installmentAmount,
 		upfrontAmount,
 		installmentPeriodInMonths,
+		purchaseDate,
 		totalPrice }) => {
 		installmentPeriodInMonths = installmentPeriodInMonths || 1;
 		upfrontAmount = upfrontAmount || installmentAmount;
@@ -85,7 +86,7 @@ const paymentObjectConstructor = {
 			details: {
 				upfrontAmount,
 				installmentPeriodInMonths,
-				dueDate: Date.now() + (installmentPeriodInMonths * MONTH),
+				dueDate: new Date(purchaseDate).getTime() + (installmentPeriodInMonths * MONTH),
 				remainingPrice: totalPrice - upfrontAmount,
 				installmentAmount,
 			}
@@ -104,6 +105,7 @@ export const createTransactionController = async (req, res, next) => {
 	const {
 		buyerName,
 		items,
+		purchaseDate,
 		payment: {
 			type,
 			details,
@@ -127,10 +129,11 @@ export const createTransactionController = async (req, res, next) => {
 			});
 		const totalPrice = calculateItemsTotalPrice(populatedItemList);
 		const transaction = sanitizeTransaction(await createTransaction({
-			payment: paymentObjectConstructor[type]({ ...details, totalPrice }),
+			payment: paymentObjectConstructor[type]({ ...details, totalPrice, purchaseDate }),
 			buyerName,
 			items: sanitizeItemList(populatedItemList),
 			user: userId,
+			purchaseDate,
 		}));
 
 		res.status(201).json({ transaction });

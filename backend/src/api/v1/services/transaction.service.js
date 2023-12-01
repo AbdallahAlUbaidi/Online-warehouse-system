@@ -7,16 +7,36 @@ import AggregationPipeline, {
 	parsePipelineResult
 } from "../../../helpers/AggregationPipeline.js";
 
+import {
+	generateHashedIdentifier
+} from "../../../helpers/jsonUtils.js";
+
+import ConflictingRequestError from "../../../errors/ApiErrors/ConflictingRequestError.js";
 
 export const createTransaction = async ({
 	buyerName,
 	user,
 	items,
 	payment,
+	purchaseDate
 }) => {
 	const session = await mongoose.startSession();
 
 	try {
+
+		const hashedIdentifier = await generateHashedIdentifier({
+			buyerName,
+			user,
+			items,
+			payment,
+			purchaseDate,
+		});
+
+		const transaction = await transactionModel.findOne({ hashedIdentifier });
+
+		if (transaction)
+			throw new ConflictingRequestError("The transaction you are trying to create already exists");
+
 		let transactionObj;
 		await session.withTransaction(async () => {
 
@@ -29,6 +49,8 @@ export const createTransaction = async ({
 				user,
 				payment,
 				items,
+				purchaseDate,
+				hashedIdentifier,
 			});
 
 			const result = await Promise.all([transactionPromise, ...updateStockPromises]);

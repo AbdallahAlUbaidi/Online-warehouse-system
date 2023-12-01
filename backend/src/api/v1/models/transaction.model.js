@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema({
+
+	hashedIdentifier: {
+		type: String,
+		index: { type: "hashed" },
+		unique: true,
+		required: true,
+	},
+
 	buyerName: {
 		type: String,
 		minLength: 5,
@@ -51,7 +59,7 @@ const transactionSchema = new mongoose.Schema({
 
 	purchaseDate: {
 		type: Date,
-		default: Date.now()
+		required: true
 	},
 
 });
